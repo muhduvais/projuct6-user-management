@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Admin Home</title>
+<!-- bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round|Open+Sans">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/static/adminStyle.css">
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+<div class="container-lg mx-auto">
+    <div class="table-responsive">
+        <div class="table-wrapper rounded">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-8"><h2>User <b>Details</b></h2></div>
+                    <div class="col-sm-4">
+                        <button type="button" class="btn btn-info add-new" data-toggle="modal" data-target="#addUserModal"><i class="fa fa-plus"></i> Add New</button>
+                        <div class="search-box me-2">
+                            <i class="material-icons">&#xE8B6;</i>
+                            <input type="text" id="searchInput" class="form-control" placeholder="Search&hellip;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table class="table rounded">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Place</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% usersList.forEach(user => { %>
+                    <tr>
+                        <td><%= user.name %></td>
+                        <td><%= user.age %></td>
+                        <td><%= user.place %></td>
+                        <td><%= user.phone %></td>
+                        <td><%= user.email %></td>
+                        <td>
+                            <a class="add" title="Add" data-toggle="modal"><i class="material-icons">&#xE03B;</i></a>
+                            <a class="edit" title="Edit" data-toggle="modal" data-target="#editUserModal<%= user._id %>"><i class="material-icons">&#xE254;</i></a>
+                            <a class="delete" title="Delete" data-toggle="modal" data-target="#deleteUserModal<%= user._id %>"><i class="material-icons">&#xE872;</i></a>
+                        </td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <a href="/adminLogout" class="btn btn-info pb-0" type="button"><h5>Logout</h5></a>
+</div>
+
+<!-- Add Modal HTML -->
+<div id="addUserModal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="addUserForm" action="/addUser" method="POST">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Employee</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="name" name="name" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="text" id="age" name="age" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Place</label>
+                        <input type="text" id="place" name="place" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="text" id="phone" name="phone" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" id="email" name="email" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="password" name="password" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Repeat Password</label>
+                        <input type="password" id="cPassword" name="cPassword" class="form-control">
+                    </div>
+                    <div class="form-group d-none">
+                        <label>isAdmin</label>
+                        <input type="text" id="isAdmin" name="isAdmin" class="form-control" value="0">
+                    </div>
+                    <div class="signupMessage text-danger"><%= locals.signupMessage? signupMessage : "" %></div>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                    <input type="submit" class="btn btn-success" value="Add">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit Modal HTML -->
+<% usersList.forEach(user => { %>
+    <div id="editUserModal<%= user._id %>" class="modal fade">
+        <div class="modal-dialog modal-box-shadow">
+            <div class="modal-content">
+                <form action="/editUser/<%= user._id %>" method="POST">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit User</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" name="name" class="form-control" value="<%= user.name %>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Age</label>
+                            <input type="number" name="age" class="form-control" value="<%= user.age %>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Place</label>
+                            <input type="text" name="place" class="form-control" value="<%= user.place %>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="text" name="phone" class="form-control" value="<%= user.phone %>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" class="form-control" value="<%= user.email %>" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                        <input type="submit" class="btn btn-info" value="Save">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <% }) %>
+
+
+<!-- Delete Modal HTML -->
+<% usersList.forEach(user => { %>
+<div id="deleteUserModal<%= user._id %>" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/deleteUser/<%= user._id %>" method="POST">
+                <div class="modal-header">
+                    <h4 class="modal-title">Delete User</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this user?</p>
+                    <p class="text-muted"><small>This action cannot be undone.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                    <input type="submit" class="btn btn-danger" value="Delete">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<% }) %>
+
+<script src="/static/adminScript.js"></script>
+</body>
+</html>
